@@ -6,25 +6,25 @@
             </h1>
             <form @submit.prevent="updateInfo">
                 <div class="mb-4">
-                    <label for="editFirstName" class="block text-sm font-medium text-gray-900 dark:text-white"
-                        >Họ</label
+                    <label for="editUsername" class="block text-sm font-medium text-gray-900 dark:text-white"
+                        >Username</label
                     >
                     <input
-                        v-model="userToEdit.firstName"
+                        v-model="userToEdit.username"
                         type="text"
-                        id="editFirstName"
+                        id="editUsername"
                         class="w-full p-2.5 mt-1 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                        required
+                        disabled
                     />
                 </div>
                 <div class="mb-4">
-                    <label for="editLastName" class="block text-sm font-medium text-gray-900 dark:text-white"
-                        >Tên</label
+                    <label for="editName" class="block text-sm font-medium text-gray-900 dark:text-white"
+                        >Họ và tên</label
                     >
                     <input
-                        v-model="userToEdit.lastName"
+                        v-model="userToEdit.name"
                         type="text"
-                        id="editLastName"
+                        id="editName"
                         class="w-full p-2.5 mt-1 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                         required
                     />
@@ -40,6 +40,18 @@
                     />
                 </div>
                 <div class="mb-4">
+                    <label for="editRole" class="block text-sm font-medium text-gray-900 dark:text-white"
+                        >Chức vụ</label
+                    >
+                    <input
+                        v-model="userToEdit.role"
+                        type="text"
+                        id="editRole"
+                        class="w-full p-2.5 mt-1 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        disabled
+                    />
+                </div>
+                <!-- <div class="mb-4">
                     <label for="editBirthday" class="block text-sm font-medium text-gray-900 dark:text-white"
                         >Ngày sinh</label
                     >
@@ -89,7 +101,7 @@
                         <option value="female">Female</option>
                         <option value="other">Other</option>
                     </select>
-                </div>
+                </div> -->
 
                 <div class="flex justify-end mt-6">
                     <button
@@ -126,14 +138,15 @@ export default {
             const user = JSON.parse(localStorage.getItem('user'));
             console.log('user.userData: ', user.userData);
             if (user && user.userData) {
-                this.userToEdit.firstName = user.userData.firstName || '';
-                this.userToEdit.lastName = user.userData.lastName || '';
+                this.userToEdit.name = user.userData.name || '';
+                this.userToEdit.username = user.userData.username || '';
                 this.userToEdit.email = user.userData.email || '';
+                this.userToEdit.role = user.userData.role || '';
                 // this.userToEdit.birthday = user.userData.birthday || '';
-                this.userToEdit.birthday = this.formatBirthday(user.userData.birthday);
-                this.userToEdit.address = user.userData.address || '';
-                this.userToEdit.phoneNumber = user.userData.phoneNumber || '';
-                this.userToEdit.gender = user.userData.gender || '';
+                // this.userToEdit.birthday = this.formatBirthday(user.userData.birthday);
+                // this.userToEdit.address = user.userData.address || '';
+                // this.userToEdit.phoneNumber = user.userData.phoneNumber || '';
+                // this.userToEdit.gender = user.userData.gender || '';
             }
         },
         formatBirthdayHtml(dateString) {

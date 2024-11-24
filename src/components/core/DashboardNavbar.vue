@@ -16,6 +16,9 @@ import { LogOut, User, Bell, Sun, MoonStar, Menu, KeyRound, UsersRound } from 'l
 import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/stores/app';
 import { useToast } from 'vue-toastification';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const store = useAppStore();
 
@@ -30,13 +33,13 @@ const getName = computed(() => {
             return 'Người dùng không tồn tại'; // Không có thông tin người dùng trong localStorage
         }
         const userObj = JSON.parse(user); // Chuyển đổi chuỗi JSON thành đối tượng
-        return userObj.userData.firstName + userObj.userData.lastName; // Trả về tên người dùng
+        return userObj.userData.name; // Trả về tên người dùng
     } catch (error) {
         console.error('Lỗi khi lấy dữ liệu người dùng từ localStorage:', error);
         return 'Người dùng không tồn tại'; // Trả về giá trị mặc định khi có lỗi
     }
 });
-const getEmail = computed(() => {
+const getUsername = computed(() => {
     try {
         const user = localStorage.getItem('user');
         console.log('userLocalstoraege: ', user);
@@ -44,7 +47,7 @@ const getEmail = computed(() => {
             return 'Người dùng không tồn tại'; // Không có thông tin người dùng trong localStorage
         }
         const userObj = JSON.parse(user); // Chuyển đổi chuỗi JSON thành đối tượng
-        return userObj.userData.email; // Trả về tên người dùng
+        return userObj.userData.username; // Trả về tên người dùng
     } catch (error) {
         console.error('Lỗi khi lấy dữ liệu người dùng từ localStorage:', error);
         return 'Người dùng không tồn tại'; // Trả về giá trị mặc định khi có lỗi
@@ -114,7 +117,7 @@ const handleLogout = async () => {
                         </Avatar>
                         <span class="ml-2 hidden md:flex justify-start flex-col items-start">
                             <p class="mb-0">{{ getName }}</p>
-                            <small class="text-xs text-slate-400 font-light">{{ getEmail }}</small>
+                            <small class="text-xs text-slate-400 font-light">{{ getUsername }}</small>
                         </span>
                     </Button>
                 </DropdownMenuTrigger>
