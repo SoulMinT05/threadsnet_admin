@@ -123,7 +123,7 @@
                 <tbody class="text-gray-600 text-sm font-light">
                     <tr
                         v-for="user in sortedAndPaginatedUsers"
-                        :key="user.id"
+                        :key="user?.id"
                         class="border-b border-gray-200 hover:bg-gray-100"
                     >
                         <td class="py-3 px-6 text-left">
@@ -620,6 +620,8 @@ export default {
             const start = (this.currentPage - 1) * this.pageSize;
             const end = start + this.pageSize;
 
+            console.log('sortedUsers: ', sortedUsers);
+
             // Trả về dữ liệu phân trang sau khi đã sắp xếp
             return sortedUsers.slice(start, end);
         },
@@ -651,13 +653,13 @@ export default {
 
             const normalizedSearchQuery = roleMap[searchQuery] || searchQuery;
             return this.users.filter((user) => {
-                const name = user.name ? user.name.toLowerCase() : '';
-                const username = user.username ? user.username.toLowerCase() : '';
-                const email = user.email ? user.email?.toLowerCase() : '';
-                const role = user.role ? user.role?.toLowerCase() : '';
+                const name = user?.name ? user?.name.toLowerCase() : '';
+                const username = user?.username ? user?.username.toLowerCase() : '';
+                const email = user?.email ? user?.email?.toLowerCase() : '';
+                const role = user?.role ? user?.role?.toLowerCase() : '';
 
-                const createdAt = user.createdAt ? new Date(user.createdAt) : null;
-                const updatedAt = user.updatedAt ? new Date(user.updatedAt) : null;
+                const createdAt = user?.createdAt ? new Date(user.createdAt) : null;
+                const updatedAt = user?.updatedAt ? new Date(user.updatedAt) : null;
 
                 const formattedCreatedAt = createdAt
                     ? createdAt.getDate().toString().padStart(2, '0') +
@@ -834,8 +836,8 @@ export default {
         editUser(user) {
             console.log('User to edit:', user);
             this.userToEdit = { ...user }; // Make a copy of the user object to avoid directly modifying the array
-            this.userToEdit.birthday = this.formatBirthday(user.birthday);
-            console.log('Converted birthday for edit:', this.userToEdit.birthday);
+            // this.userToEdit.birthday = this.formatBirthday(user.birthday);
+            // console.log('Converted birthday for edit:', this.userToEdit.birthday);
             this.isEditUserModalVisible = true;
         },
         closeEditUserModal() {
@@ -849,6 +851,7 @@ export default {
 
                 // Lấy userId từ userToEdit
                 const userId = this.userToEdit._id;
+                console.log('userId-edit: ', userId);
                 const res = await fetch(`http://localhost:3001/api/user/updateInfoFromAdmin/${userId}`, {
                     method: 'PUT',
                     headers: {
@@ -857,6 +860,7 @@ export default {
                     },
                     body: JSON.stringify(this.userToEdit),
                 });
+                console.log('this.userToEdit-edit: ', this.userToEdit);
 
                 const data = await res.json();
                 const toast = useToast();
