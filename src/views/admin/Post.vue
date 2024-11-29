@@ -72,7 +72,7 @@
                             </span>
                         </th>
                         <th class="py-3 px-6 text-left cursor-pointer" @click="sortBy('visibility')">
-                            Trạng thái
+                            Chế độ
                             <span v-if="currentSort !== 'visibility'" class="ml-2">
                                 <i class="fas fa-sort"></i>
                             </span>
@@ -80,6 +80,18 @@
                                 <i class="fas fa-sort-up"></i>
                             </span>
                             <span v-if="currentSort === 'visibility' && currentSortDir === 'desc'" class="ml-2">
+                                <i class="fas fa-sort-down"></i>
+                            </span>
+                        </th>
+                        <th class="py-3 px-6 text-center cursor-pointer" @click="sortBy('status')">
+                            Trạng thái
+                            <span v-if="currentSort !== 'status'" class="ml-2">
+                                <i class="fas fa-sort"></i>
+                            </span>
+                            <span v-if="currentSort === 'status' && currentSortDir === 'asc'" class="ml-2">
+                                <i class="fas fa-sort-up"></i>
+                            </span>
+                            <span v-if="currentSort === 'status' && currentSortDir === 'desc'" class="ml-2">
                                 <i class="fas fa-sort-down"></i>
                             </span>
                         </th>
@@ -95,7 +107,19 @@
                                 <i class="fas fa-sort-down"></i>
                             </span>
                         </th>
-                        <th class="py-3 px-6 text-center">Ngày cập nhật</th>
+                        <!-- <th class="py-3 px-6 text-center">
+                            Ngày cập nhật
+                            <span v-if="currentSort !== 'updatedAt'" class="ml-2">
+                                <i class="fas fa-sort"></i>
+                            </span>
+                            <span v-if="currentSort === 'updatedAt' && currentSortDir === 'asc'" class="ml-2">
+                                <i class="fas fa-sort-up"></i>
+                            </span>
+                            <span v-if="currentSort === 'updatedAt' && currentSortDir === 'desc'" class="ml-2">
+                                <i class="fas fa-sort-down"></i>
+                            </span>
+                        </th> -->
+
                         <th class="py-3 px-6 text-center">Hành động</th>
                     </tr>
                 </thead>
@@ -112,13 +136,22 @@
                             <div v-else>No images available</div>
                         </td> -->
                         <td class="py-4 px-6 text-left">
-                            <span class="font-medium">{{ post?.image }}</span>
+                            <img
+                                :src="post?.image"
+                                :style="{
+                                    width: '76px',
+                                    height: '76px',
+                                    objectFit: 'cover',
+                                    borderRadius: '8px',
+                                }"
+                                alt=""
+                            />
                         </td>
                         <td class="py-4 px-6 text-left">
                             <span class="font-medium">{{ post?.postedBy?.username }}</span>
                         </td>
                         <td class="py-4 px-6 text-left">
-                            <span class="font-medium">{{ post?.text }}</span>
+                            <span class="font-medium truncate">{{ truncateText(post?.text, 20) }}</span>
                         </td>
                         <td class="py-4 px-6 text-left">
                             <span class="font-medium">{{ post?.numberViews }}</span>
@@ -147,12 +180,25 @@
                                 >Chỉ mình tôi</Badge
                             >
                         </td>
+                        <td class="py-4 px-6 text-left">
+                            <Badge
+                                v-if="post?.status === false"
+                                class="bg-green-200 text-green-600 py-1 px-3 rounded-full text-xs"
+                                >Tích cực</Badge
+                            >
+
+                            <Badge
+                                v-else-if="post?.status === true"
+                                class="bg-red-200 text-red-600 py-1 px-3 rounded-full text-xs"
+                                >Nhạy cảm</Badge
+                            >
+                        </td>
                         <td class="py-4 px-6 text-center">
                             <span>{{ formatDate(post?.createdAt) }}</span>
                         </td>
-                        <td class="py-4 px-6 text-center">
+                        <!-- <td class="py-4 px-6 text-center">
                             <span>{{ formatDate(post?.updatedAt) }}</span>
-                        </td>
+                        </td> -->
                         <td class="py-4 px-6 text-center">
                             <div class="flex item-center justify-center">
                                 <button
@@ -180,77 +226,70 @@
             </table>
         </div>
 
-        <!-- Add product modal -->
+        <!-- Add post modal -->
         <div
-            v-if="isAddProductModalVisible"
+            v-if="isAddPostModalVisible"
             class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
         >
             <div class="bg-white rounded-lg p-6 w-11/12 md:w-2/3 lg:w-1/2 modal-content">
                 <h2 class="text-lg font-bold mb-4">Thêm bài viết</h2>
-                <form @submit.prevent="addProduct">
+                <form @submit.prevent="addPost">
+                    <label for="image" class="block text-sm font-medium text-gray-700"> Hình ảnh </label>
+                    <input
+                        type="file"
+                        id="image"
+                        accept="image/*"
+                        @change="handleFileUpload"
+                        class="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                    />
+
+                    <!-- Hiển thị hình ảnh -->
+                    <div v-if="previewImage" class="mt-4">
+                        <p class="text-sm text-gray-500">Xem trước hình ảnh:</p>
+                        <img
+                            :src="previewImage"
+                            alt="Preview"
+                            class="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                        />
+                    </div>
                     <div class="mb-4">
-                        <label for="name" class="block text-sm font-medium text-gray-700">Tên</label>
+                        <label for="text" class="block text-sm font-medium text-gray-700">Người đăng</label>
                         <input
-                            v-model="newPost.name"
+                            v-model="newPost.postedBy"
                             type="text"
-                            id="name"
+                            id="text"
+                            class="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                            required
+                            disabled
+                        />
+                    </div>
+                    <div class="mb-4">
+                        <label for="text" class="block text-sm font-medium text-gray-700">Nội dung bài viết</label>
+                        <input
+                            v-model="newPost.text"
+                            type="text"
+                            id="text"
                             class="mt-1 p-2 w-full border border-gray-300 rounded-md"
                             required
                         />
                     </div>
                     <div class="mb-4">
-                        <label for="author" class="block text-sm font-medium text-gray-700">Tác giả</label>
-                        <input
-                            v-model="newPost.author"
-                            type="text"
-                            id="author"
-                            class="mt-1 p-2 w-full border border-gray-300 rounded-md"
-                            required
-                        />
-                    </div>
-                    <div class="mb-4">
-                        <label for="price" class="block text-sm font-medium text-gray-700">Giá</label>
-                        <input
-                            v-model="newPost.price"
-                            type="number"
-                            id="price"
-                            class="mt-1 p-2 w-full border border-gray-300 rounded-md"
-                        />
-                    </div>
-                    <div class="mb-4">
-                        <label for="quantity" class="block text-sm font-medium text-gray-700">Số lượng</label>
-                        <input
-                            v-model="newPost.quantity"
-                            type="number"
-                            id="quantity"
-                            class="mt-1 p-2 w-full border border-gray-300 rounded-md"
-                        />
-                    </div>
-                    <div class="mb-4">
-                        <label for="yearOfPublication" class="block text-sm font-medium text-gray-700">Năm XB</label>
-                        <input
-                            v-model="newPost.yearOfPublication"
-                            type="number"
-                            id="yearOfPublication"
-                            class="mt-1 p-2 w-full border border-gray-300 rounded-md"
-                        />
-                    </div>
-                    <div class="mb-4">
-                        <label for="publisher" class="block text-sm font-medium text-gray-700">Nhà XB</label>
+                        <label for="visibility" class="block text-sm font-medium text-gray-700">
+                            Chế độ bài viết
+                        </label>
                         <select
-                            v-model="newPost.publisher"
-                            id="publisher"
+                            v-model="newPost.visibility"
+                            id="visibility"
                             class="mt-1 p-2 w-full border border-gray-300 rounded-md"
-                            required
                         >
-                            <option disabled value="">Chọn nhà xuất bản</option>
-                            <option v-for="publisher in publishers" :key="publisher._id" :value="publisher.name">
-                                {{ publisher.name }}
-                            </option>
+                            <option value="public">Công khai</option>
+                            <option value="friends">Bạn bè</option>
+                            <option value="followers">Người theo dõi</option>
+                            <option value="private">Chỉ mình tôi</option>
                         </select>
                     </div>
-                    <div class="mb-4">
-                        <!-- Thêm trường upload ảnh -->
+
+                    <!-- <div class="mb-4">
                         <label for="images" class="block text-sm font-medium text-gray-700">Chọn ảnh</label>
                         <input
                             type="file"
@@ -265,7 +304,7 @@
                         <div v-for="(image, index) in previewImages" :key="index" class="relative">
                             <img :src="image" alt="Preview Image" class="w-full h-44 object-cover rounded-md" />
                         </div>
-                    </div>
+                    </div> -->
                     <div class="flex justify-end mt-6">
                         <button
                             type="button"
@@ -293,7 +332,7 @@
 
         <!-- View detail product -->
         <div
-            v-if="selectedProduct"
+            v-if="selectedPost"
             class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-y-scroll"
         >
             <div @click.stop class="bg-white rounded-lg shadow-lg p-6 w-11/12 md:w-2/3 lg:w-1/2">
@@ -302,18 +341,66 @@
                 <div class="space-y-2">
                     <p><strong>Hình ảnh:</strong></p>
                     <div class="flex flex-wrap justify-start gap-3 mb-4">
-                        <div v-for="(image, index) in selectedProduct.images" :key="index" class="flex-shrink-0">
+                        <!-- <div v-for="(image, index) in selectedPost.images" :key="index" class="flex-shrink-0">
                             <img :src="image" alt="Hình ảnh bài viết" class="rounded-lg w-24 h-24 object-cover" />
-                        </div>
+                        </div> -->
+                        <img
+                            :src="selectedPost.image"
+                            alt="Hình ảnh bài viết"
+                            class="rounded-lg w-24 h-24 object-cover"
+                        />
                     </div>
-                    <p><strong>Tên bài viết:</strong> {{ selectedProduct.name }}</p>
-                    <p><strong>Tác giả:</strong> {{ selectedProduct.author }}</p>
-                    <p><strong>Giá:</strong> {{ formatPrice(selectedProduct.price) }}</p>
-                    <p><strong>Số lượng:</strong> {{ selectedProduct.quantity }}</p>
-                    <p><strong>Năm xuất bản:</strong> {{ selectedProduct.yearOfPublication }}</p>
-                    <p><strong>Nhà xuất bản:</strong> {{ selectedProduct.publisherId.name }}</p>
-                    <p><strong>Ngày tạo:</strong> {{ formatDate(selectedProduct.createdAt) }}</p>
-                    <p><strong>Ngày cập nhật:</strong> {{ formatDate(selectedProduct.updatedAt) }}</p>
+                    <p><strong>Bài viết: </strong> {{ selectedPost.text }}</p>
+                    <p><strong>Người đăng: </strong> {{ selectedPost?.postedBy?.username }}</p>
+                    <p><strong>Người xem:</strong> {{ selectedPost.numberViews }}</p>
+                    <p><strong>Lượt thích:</strong> {{ selectedPost.likes.length }}</p>
+                    <p><strong>Bình luận:</strong> {{ selectedPost.comments.length }}</p>
+
+                    <p>
+                        <strong>Chế độ:</strong>
+                        <span
+                            v-if="selectedPost.visibility === 'public'"
+                            class="bg-blue-200 text-blue-600 py-1 px-3 rounded-full text-xs"
+                        >
+                            Công khai
+                        </span>
+                        <span
+                            v-else-if="selectedPost.visibility === 'friends'"
+                            class="bg-yellow-200 text-yellow-600 py-1 px-3 rounded-full text-xs"
+                        >
+                            Bạn bè
+                        </span>
+                        <span
+                            v-else-if="selectedPost.visibility === 'followers'"
+                            class="bg-green-200 text-green-600 py-1 px-3 rounded-full text-xs"
+                        >
+                            Người theo dõi
+                        </span>
+                        <span
+                            v-else-if="selectedPost.visibility === 'private'"
+                            class="bg-gray-200 text-gray-600 py-1 px-3 rounded-full text-xs"
+                        >
+                            Chỉ mình tôi
+                        </span>
+                    </p>
+                    <p>
+                        <strong>Chế độ:</strong>
+                        <span
+                            v-if="selectedPost.status === true"
+                            class="bg-green-200 text-green-600 py-1 px-3 rounded-full text-xs"
+                        >
+                            Tích cực
+                        </span>
+                        <span
+                            v-else-if="selectedPost.status === false"
+                            class="bg-red-200 text-red-600 py-1 px-3 rounded-full text-xs"
+                        >
+                            Nhạy cảm
+                        </span>
+                    </p>
+
+                    <p><strong>Ngày tạo:</strong> {{ formatDate(selectedPost.createdAt) }}</p>
+                    <p><strong>Ngày cập nhật:</strong> {{ formatDate(selectedPost.updatedAt) }}</p>
                 </div>
                 <div class="mt-6 flex justify-end">
                     <button
@@ -328,7 +415,7 @@
 
         <!-- Edit product modal -->
         <div
-            v-if="isEditProductModalVisible"
+            v-if="isEditPostModalVisible"
             class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
         >
             <div class="bg-white rounded-lg p-6 w-11/12 md:w-2/3 lg:w-1/2 modal-content">
@@ -337,7 +424,7 @@
                     <div class="mb-4">
                         <label for="editName" class="block text-sm font-medium text-gray-700">Tên</label>
                         <input
-                            v-model="productToEdit.name"
+                            v-model="postToEdit.name"
                             type="text"
                             id="editName"
                             class="mt-1 p-2 w-full border border-gray-300 rounded-md"
@@ -348,7 +435,7 @@
                     <div class="mb-4">
                         <label for="editAuthor" class="block text-sm font-medium text-gray-700">Tác giả</label>
                         <input
-                            v-model="productToEdit.author"
+                            v-model="postToEdit.author"
                             type="text"
                             id="editAuthor"
                             class="mt-1 p-2 w-full border border-gray-300 rounded-md"
@@ -357,7 +444,7 @@
                     <div class="mb-4">
                         <label for="editPrice" class="block text-sm font-medium text-gray-700">Gía</label>
                         <input
-                            v-model="productToEdit.price"
+                            v-model="postToEdit.price"
                             type="number"
                             id="editPrice"
                             class="mt-1 p-2 w-full border border-gray-300 rounded-md"
@@ -366,7 +453,7 @@
                     <div class="mb-4">
                         <label for="editQuantity" class="block text-sm font-medium text-gray-700">Số lượng</label>
                         <input
-                            v-model="productToEdit.quantity"
+                            v-model="postToEdit.quantity"
                             type="number"
                             id="editQuantity"
                             class="mt-1 p-2 w-full border border-gray-300 rounded-md"
@@ -377,7 +464,7 @@
                             >Năm XB</label
                         >
                         <input
-                            v-model="productToEdit.yearOfPublication"
+                            v-model="postToEdit.yearOfPublication"
                             type="number"
                             id="editYearOfPublication"
                             class="mt-1 p-2 w-full border border-gray-300 rounded-md"
@@ -386,7 +473,7 @@
                     <div class="mb-4">
                         <label for="publisher" class="block text-sm font-medium text-gray-700">Nhà XB</label>
                         <!-- <select
-                          v-model="productToEdit.publisherId.name"
+                          v-model="postToEdit.publisherId.name"
                           id="publisher"
                           class="mt-1 p-2 w-full border border-gray-300 rounded-md"
                           required
@@ -397,7 +484,7 @@
                           </option>
                       </select> -->
                         <select
-                            v-model="productToEdit.publisherId"
+                            v-model="postToEdit.publisherId"
                             id="publisher"
                             class="mt-1 p-2 w-full border border-gray-300 rounded-md"
                         >
@@ -521,6 +608,7 @@ export default {
                 publisher: '',
             },
             // Create images
+            previewImage: null,
             uploadImages: [],
             previewImages: [],
             // Edit images
@@ -529,14 +617,14 @@ export default {
             newImages: [], // Danh bài viết file ảnh mới
             deletedImages: [], // Danh bài viết ảnh bị xóa
             publishers: [],
-            isAddProductModalVisible: false,
+            isAddPostModalVisible: false,
             loading: false,
             loadingEdit: false,
             currentPage: 1, // Bắt đầu với trang đầu tiên
             pageSize: 10, // Hiển thị 10 bài viết mỗi trang
-            selectedProduct: null,
-            productToEdit: null,
-            isEditProductModalVisible: false, // For Edit product modal
+            selectedPost: null,
+            postToEdit: null,
+            isEditPostModalVisible: false, // For Edit product modal
             isLoading: false,
         };
     },
@@ -625,6 +713,10 @@ export default {
         },
     },
     methods: {
+        truncateText(text, maxLength) {
+            if (!text) return '';
+            return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+        },
         sortBy(column) {
             if (this.currentSort === column) {
                 // Nếu đã sắp xếp theo cột này, đổi chiều
@@ -756,7 +848,7 @@ export default {
             try {
                 const user = JSON.parse(localStorage.getItem('user'));
                 const userToken = user.accessToken;
-                const res = await fetch('http://localhost:3001/api/post/getAllPosts', {
+                const res = await fetch('http://localhost:3001/api/post/getAllPostsFromAdmin', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -780,10 +872,10 @@ export default {
             }
         },
         showAddPostModal() {
-            this.isAddProductModalVisible = true;
+            this.isAddPostModalVisible = true;
         },
         closeAddPostModal() {
-            this.isAddProductModalVisible = false;
+            this.isAddPostModalVisible = false;
             this.resetNewPost(); // Đặt lại thông tin bài viết mới sau khi đóng modal
         },
         resetNewPost() {
@@ -797,6 +889,17 @@ export default {
             };
             this.uploadImages = [];
             this.previewImages = [];
+        },
+
+        handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.previewImage = e.target.result; // Lưu URL base64 để hiển thị hình ảnh
+                };
+                reader.readAsDataURL(file); // Đọc tệp ảnh
+            }
         },
 
         handleFileChange(event) {
@@ -824,7 +927,7 @@ export default {
             console.log('this.previewImages: ', this.previewImages);
         },
 
-        async addProduct() {
+        async addPost() {
             this.loading = true;
             try {
                 const user = JSON.parse(localStorage.getItem('user'));
@@ -833,19 +936,17 @@ export default {
                 this.isUploading = true;
 
                 const formData = new FormData();
-                formData.append('name', this.newPost.name);
-                formData.append('author', this.newPost.author);
-                formData.append('price', this.newPost.price);
-                formData.append('quantity', this.newPost.quantity);
-                formData.append('yearOfPublication', this.newPost.yearOfPublication);
-                formData.append('publisher', this.newPost.publisher);
+                formData.append('postedBy', this.newPost.postedBy);
+                formData.append('text', this.newPost.text);
+                formData.append('visibility', this.newPost.visibility);
                 // Thêm các ảnh đã chọn vào form data
-                this.uploadImages.forEach((image) => {
-                    formData.append('images', image); // Gửi từng ảnh
-                });
+                if (this.newPost.image) {
+                    formData.append('image', this.newPost.image);
+                }
+                console.log('formData: ', formData);
 
                 // Gửi request tạo sản phẩm cùng với ảnh
-                const res = await fetch('http://localhost:3001/api/book/createProduct', {
+                const res = await fetch('http://localhost:3001/api/post/createPost', {
                     method: 'POST',
                     headers: {
                         Authorization: `Bearer ${userToken}`,
@@ -855,7 +956,7 @@ export default {
 
                 const data = await res.json();
                 const toast = useToast();
-                console.log('dataAddProducts: ', data);
+                console.log('dataAddPosts: ', data);
 
                 if (!data.success) {
                     toast.error(data.message);
@@ -863,9 +964,9 @@ export default {
                 }
 
                 // Thêm sản phẩm mới vào danh bài viết
-                this.products.push(data.newPost);
+                this.posts.push(data.newPost);
 
-                console.log('this.products: ', this.products);
+                console.log('this.posts: ', this.posts);
                 toast.success('Thêm bài viết thành công');
                 this.closeAddPostModal();
             } catch (error) {
@@ -892,15 +993,15 @@ export default {
         },
 
         editPost(post) {
-            this.productToEdit = { ...product }; // Make a copy of the publisher object to avoid directly modifying the array
-            this.currentImages = [...product.images];
+            this.postToEdit = { ...post }; // Make a copy of the publisher object to avoid directly modifying the array
+            this.currentImages = [...post.images];
             this.deletedImages = [];
             this.newImages = [];
-            this.isEditProductModalVisible = true;
+            this.isEditPostModalVisible = true;
         },
         closeEditProductModal() {
-            this.isEditProductModalVisible = false;
-            this.productToEdit = null; // Clear the productToEdit data after closing the modal
+            this.isEditPostModalVisible = false;
+            this.postToEdit = null; // Clear the postToEdit data after closing the modal
             this.deletedImages = [];
             this.newImages = [];
             this.currentImages = [];
@@ -912,17 +1013,17 @@ export default {
                 const user = JSON.parse(localStorage.getItem('user'));
                 const userToken = user.accessToken;
 
-                // Lấy productId từ productToEdit
-                const productId = this.productToEdit._id;
+                // Lấy productId từ postToEdit
+                const productId = this.postToEdit._id;
 
                 const formData = new FormData();
-                // Gán các thông tin sản phẩm từ productToEdit vào FormData
-                formData.append('name', this.productToEdit.name);
-                formData.append('author', this.productToEdit.author);
-                formData.append('price', this.productToEdit.price);
-                formData.append('quantity', this.productToEdit.quantity);
-                formData.append('yearOfPublication', this.productToEdit.yearOfPublication);
-                formData.append('publisher', this.productToEdit.publisher);
+                // Gán các thông tin sản phẩm từ postToEdit vào FormData
+                formData.append('name', this.postToEdit.name);
+                formData.append('author', this.postToEdit.author);
+                formData.append('price', this.postToEdit.price);
+                formData.append('quantity', this.postToEdit.quantity);
+                formData.append('yearOfPublication', this.postToEdit.yearOfPublication);
+                formData.append('publisher', this.postToEdit.publisher);
                 // Gửi đường dẫn hình ảnh đã xóa
                 if (this.deletedImages.length > 0) {
                     formData.append('deleteImage', JSON.stringify(this.deletedImages));
@@ -970,10 +1071,11 @@ export default {
 
         viewPost(post) {
             // Logic xem chi tiết bài viết
-            this.selectedProduct = product;
+            this.selectedPost = post;
+            console.log('this.selectedPost: ', this.selectedPost);
         },
         closeModal() {
-            this.selectedProduct = null;
+            this.selectedPost = null;
         },
 
         async deletePost(post) {
@@ -1074,5 +1176,13 @@ export default {
     to {
         transform: rotate(360deg);
     }
+}
+
+span.truncate {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 300px; /* Điều chỉnh theo yêu cầu */
 }
 </style>
