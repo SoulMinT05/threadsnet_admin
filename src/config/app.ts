@@ -53,18 +53,18 @@ export const APP_MENU: Record<string, { name: string; routes: IDashboardMenus[] 
                 icon: 'Upload',
                 description: 'Manage post',
             },
-            {
-                path: 'comment',
-                title: 'Bình luận',
-                icon: 'MessageSquareMore',
-                description: 'Manage comment',
-            },
-            {
-                path: 'chat',
-                title: 'Nhắn tin',
-                icon: 'MessageCircle',
-                description: 'Manage chat',
-            },
+            // {
+            //     path: 'comment',
+            //     title: 'Bình luận',
+            //     icon: 'MessageSquareMore',
+            //     description: 'Manage comment',
+            // },
+            // {
+            //     path: 'chat',
+            //     title: 'Nhắn tin',
+            //     icon: 'MessageCircle',
+            //     description: 'Manage chat',
+            // },
             {
                 path: 'settings',
                 title: 'Cài đặt',

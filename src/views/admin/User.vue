@@ -105,7 +105,7 @@
                                 <i class="fas fa-sort-down"></i>
                             </span>
                         </th>
-                        <th class="py-3 px-6 text-center cursor-pointer" @click="sortBy('updatedAt')">
+                        <!-- <th class="py-3 px-6 text-center cursor-pointer" @click="sortBy('updatedAt')">
                             Ngày cập nhật
                             <span v-if="currentSort !== 'updatedAt'" class="ml-2">
                                 <i class="fas fa-sort"></i>
@@ -116,7 +116,7 @@
                             <span v-if="currentSort === 'updatedAt' && currentSortDir === 'desc'" class="ml-2">
                                 <i class="fas fa-sort-down"></i>
                             </span>
-                        </th>
+                        </th> -->
                         <th class="py-3 px-6 text-center cursor-pointer" @click="sortBy('updatedAt')">Hành động</th>
                     </tr>
                 </thead>
@@ -171,9 +171,9 @@
                         <td class="py-3 px-6 text-center">
                             <span>{{ formatDate(user.createdAt) }}</span>
                         </td>
-                        <td class="py-3 px-6 text-center">
+                        <!-- <td class="py-3 px-6 text-center">
                             <span>{{ formatDate(user.updatedAt) }}</span>
-                        </td>
+                        </td> -->
                         <td class="py-3 px-6 text-center">
                             <div class="flex item-center justify-center">
                                 <button

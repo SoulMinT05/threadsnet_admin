@@ -53,6 +53,20 @@ const getUsername = computed(() => {
         return 'Người dùng không tồn tại'; // Trả về giá trị mặc định khi có lỗi
     }
 });
+const getEmail = computed(() => {
+    try {
+        const user = localStorage.getItem('user');
+        console.log('userLocalstoraege: ', user);
+        if (!user) {
+            return 'Người dùng không tồn tại'; // Không có thông tin người dùng trong localStorage
+        }
+        const userObj = JSON.parse(user); // Chuyển đổi chuỗi JSON thành đối tượng
+        return userObj.userData.email; // Trả về tên người dùng
+    } catch (error) {
+        console.error('Lỗi khi lấy dữ liệu người dùng từ localStorage:', error);
+        return 'Người dùng không tồn tại'; // Trả về giá trị mặc định khi có lỗi
+    }
+});
 const handleLogout = async () => {
     const toast = useToast();
     const user = JSON.parse(localStorage.getItem('user'));
@@ -116,8 +130,8 @@ const handleLogout = async () => {
                             <AvatarImage src="https://github.com/radix-vue.png"></AvatarImage>
                         </Avatar>
                         <span class="ml-2 hidden md:flex justify-start flex-col items-start">
-                            <p class="mb-0">{{ getName }}</p>
-                            <small class="text-xs text-slate-400 font-light">{{ getUsername }}</small>
+                            <p class="mb-0">{{ getUsername }}</p>
+                            <small class="text-xs text-slate-400 font-light">{{ getEmail }}</small>
                         </span>
                     </Button>
                 </DropdownMenuTrigger>

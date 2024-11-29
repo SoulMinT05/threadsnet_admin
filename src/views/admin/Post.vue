@@ -2,13 +2,13 @@
     <div class="container">
         <h1 class="text-3xl font-bold mb-6">Quản lý bài viết</h1>
         <div class="flex justify-between items-center">
-            <button
+            <!-- <button
                 @click="showAddPostModal"
                 type="button"
                 class="cursor-pointer text-white mb-4 bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition duration-150 ease-in-out"
             >
                 Thêm bài viết
-            </button>
+            </button> -->
             <button
                 @click="exportToExcel"
                 class="cursor-pointer text-white mb-4 bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 transition duration-150 ease-in-out"
@@ -207,12 +207,12 @@
                                 >
                                     <i class="fas fa-eye"></i>
                                 </button>
-                                <button
+                                <!-- <button
                                     @click="editPost(post)"
                                     class="cursor-pointer hover:opacity-95 w-4 mr-2 transform hover:text-yellow-500 hover:scale-110 transition-all duration-300"
                                 >
                                     <i class="fas fa-edit"></i>
-                                </button>
+                                </button> -->
                                 <button
                                     @click="deletePost(post)"
                                     class="cursor-pointer hover:opacity-95 w-4 mr-2 transform hover:text-red-500 hover:scale-110 transition-all duration-300"
@@ -289,22 +289,6 @@
                         </select>
                     </div>
 
-                    <!-- <div class="mb-4">
-                        <label for="images" class="block text-sm font-medium text-gray-700">Chọn ảnh</label>
-                        <input
-                            type="file"
-                            id="images"
-                            multiple
-                            @change="handleFileChange"
-                            class="mt-1 p-2 w-full border border-gray-300 rounded-md"
-                        />
-                        <small class="text-gray-500">Chọn tối đa 10 ảnh</small>
-                    </div>
-                    <div class="grid grid-cols-3 gap-4 mb-6 overflow-hidden">
-                        <div v-for="(image, index) in previewImages" :key="index" class="relative">
-                            <img :src="image" alt="Preview Image" class="w-full h-44 object-cover rounded-md" />
-                        </div>
-                    </div> -->
                     <div class="flex justify-end mt-6">
                         <button
                             type="button"
@@ -774,13 +758,13 @@ export default {
             const wb = XLSX.utils.book_new();
 
             // Chuyển đổi dữ liệu bài viết thành bảng
-            const ws = XLSX.utils.json_to_sheet(this.products);
+            const ws = XLSX.utils.json_to_sheet(this.posts);
 
             // Thêm bảng vào workbook
-            XLSX.utils.book_append_sheet(wb, ws, 'Products');
+            XLSX.utils.book_append_sheet(wb, ws, 'Posts');
 
             // Tạo tên file
-            const fileName = `products_${new Date().toISOString().split('T')[0]}.xlsx`;
+            const fileName = `posts_${new Date().toISOString().split('T')[0]}.xlsx`;
 
             // Xuất file
             XLSX.writeFile(wb, fileName);
@@ -1084,7 +1068,7 @@ export default {
                 const userLocalStorage = JSON.parse(localStorage.getItem('user'));
                 const userToken = userLocalStorage.accessToken;
 
-                const res = await fetch(`http://localhost:3001/api/book/${product._id}`, {
+                const res = await fetch(`http://localhost:3001/api/post/deletePostFromAdmin/${post._id}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1094,14 +1078,14 @@ export default {
 
                 const data = await res.json();
                 const toast = useToast();
-                console.log('dataDeleteProducts: ', data);
+                console.log('dataDeletePost: ', data);
 
                 if (!data.success) {
                     toast.error(data.message);
                     return;
                 }
-                this.products.splice(
-                    this.products.findIndex((p) => p._id === product._id),
+                this.posts.splice(
+                    this.posts.findIndex((p) => p._id === post._id),
                     1,
                 );
                 toast.success('Xoá bài viết thành công');
