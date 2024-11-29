@@ -55,7 +55,7 @@
     <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card class="col-span-4">
             <CardHeader>
-                <CardTitle>Đơn mượn các năm</CardTitle>
+                <CardTitle>Bài viết các năm</CardTitle>
             </CardHeader>
             <CardContent class="pl-2">
                 <ChartYear />
@@ -63,7 +63,7 @@
         </Card>
         <Card class="col-span-3">
             <CardHeader>
-                <CardTitle>Những đơn gần nhất</CardTitle>
+                <CardTitle>Bình luận gần nhất</CardTitle>
                 <CardDescription> Tính theo năm {{ new Date().getFullYear() }} </CardDescription>
             </CardHeader>
             <CardContent>

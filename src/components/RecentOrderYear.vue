@@ -6,15 +6,15 @@ import { useToast } from 'vue-toastification';
 const statistics = ref({
     currentYear: {
         users: 0,
-        products: 0,
-        orders: 0,
-        publishers: 0,
+        posts: 0,
+        comments: 0,
+        conversations: 0,
     },
     growthRatesYear: {
         users: 0,
-        products: 0,
-        orders: 0,
-        publishers: 0,
+        posts: 0,
+        comments: 0,
+        conversations: 0,
     },
 });
 const fetchData = async () => {
@@ -41,17 +41,18 @@ const fetchData = async () => {
         statistics.value = {
             currentYear: {
                 users: data.users,
-                products: data.products,
-                orders: data.orders,
-                publishers: data.publishers,
+                posts: data.posts,
+                comments: data.comments,
+                conversations: data.conversations,
             },
             growthRatesYear: {
                 users: data.users.growthRate,
-                products: data.products.growthRate,
-                orders: data.orders.growthRate,
-                publishers: data.publishers.growthRate,
+                posts: data.posts.growthRate,
+                comments: data.comments.growthRate,
+                conversations: data.conversations.growthRate,
             },
         };
+        console.log('statistics.currentYear: ', statistics.value.currentYear);
     } catch (error) {
         console.error('Error fetching data:', error);
     }
@@ -77,37 +78,31 @@ onMounted(() => {
 
 <template>
     <div class="space-y-8">
-        <!-- <div v-if="statistics.currentYear.populateOrders.length === 0" class="text-center text-gray-500">
+        <!-- <div v-if="statistics.currentYear.populateComments.length === 0" class="text-center text-gray-500">
             Chưa có đơn hàng
         </div>
         <div v-else> -->
         <div
-            v-for="(order, index) in statistics.currentYear.orders.populateOrders"
+            v-for="(comment, index) in statistics.currentYear.comments.populateComments"
             :key="index"
             class="flex items-center"
         >
             <Avatar class="h-9 w-9">
-                <AvatarImage :src="order.orderBy.avatarUrl || '/avatars/default.png'" alt="Avatar" />
-                <AvatarFallback
-                    >{{ order.orderBy.firstName.charAt(0) }}{{ order.orderBy.lastName.charAt(0) }}</AvatarFallback
-                >
+                <AvatarImage :src="comment?.userId?.avatar || '/avatars/default.png'" alt="Avatar" />
+                <AvatarFallback>
+                    {{ comment?.userId?.username || '' }}
+                </AvatarFallback>
             </Avatar>
             <div class="ml-4 space-y-1">
                 <p class="text-sm font-medium leading-none">
-                    {{ order.orderBy.firstName }} {{ order.orderBy.lastName }}
+                    {{ comment?.userId?.name || '' }}
                 </p>
-                <p class="text-sm text-muted-foreground">{{ order.orderBy.email }}</p>
+                <p class="text-sm text-muted-foreground">{{ comment?.userId?.email || '' }}</p>
             </div>
             <div class="ml-auto">
-                <span
-                    :class="{
-                        'bg-blue-500 text-white': order.status === 'pending',
-                        'bg-green-500 text-white': order.status === 'accepted',
-                        'bg-red-500 text-white': order.status === 'rejected',
-                    }"
-                    class="px-3 py-1 rounded-full text-sm font-medium"
-                >
-                    {{ getStatusMessage(order.status) }}
+                <span class="px-3 py-1 rounded-full text-sm font-medium">
+                    <!-- {{ getStatusMessage(order.status) }} -->
+                    {{ comment.textComment }}
                 </span>
             </div>
         </div>
