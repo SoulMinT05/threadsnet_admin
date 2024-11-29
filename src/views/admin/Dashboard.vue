@@ -14,41 +14,41 @@ const statistics = ref({
     // Week
     currentWeek: {
         users: 0,
-        products: 0,
-        orders: 0,
-        publishers: 0,
+        posts: 0,
+        comments: 0,
+        conversations: 0,
     },
     growthRatesWeek: {
         users: 0,
-        products: 0,
-        orders: 0,
-        publishers: 0,
+        posts: 0,
+        comments: 0,
+        conversations: 0,
     },
     // Month
     currentMonth: {
         users: 0,
-        products: 0,
-        orders: 0,
-        publishers: 0,
+        posts: 0,
+        comments: 0,
+        conversations: 0,
     },
     growthRatesMonth: {
         users: 0,
-        products: 0,
-        orders: 0,
-        publishers: 0,
+        posts: 0,
+        comments: 0,
+        conversations: 0,
     },
     // Year
     currentYear: {
         users: 0,
-        products: 0,
-        orders: 0,
-        publishers: 0,
+        posts: 0,
+        comments: 0,
+        conversations: 0,
     },
     growthRatesYear: {
         users: 0,
-        products: 0,
-        orders: 0,
-        publishers: 0,
+        posts: 0,
+        comments: 0,
+        conversations: 0,
     },
     statisticsWeek: [],
     statisticsMonth: [],
@@ -80,20 +80,20 @@ const fetchStatisticsWeek = async () => {
                 count: weekData.users.count,
                 growthRate: weekData.users.growthRate,
             },
-            products: {
-                title: weekData.products.title,
-                count: weekData.products.count,
-                growthRate: weekData.products.growthRate,
+            posts: {
+                title: weekData.posts.title,
+                count: weekData.posts.count,
+                growthRate: weekData.posts.growthRate,
             },
-            orders: {
-                title: weekData.orders.title,
-                count: weekData.orders.count,
-                growthRate: weekData.orders.growthRate,
+            comments: {
+                title: weekData.comments.title,
+                count: weekData.comments.count,
+                growthRate: weekData.comments.growthRate,
             },
-            publishers: {
-                title: weekData.publishers.title,
-                count: weekData.publishers.count,
-                growthRate: weekData.publishers.growthRate,
+            conversations: {
+                title: weekData.conversations.title,
+                count: weekData.conversations.count,
+                growthRate: weekData.conversations.growthRate,
             },
         }));
         console.log('statistics.value.statisticsWeek: ', statistics.value.statisticsWeek);
@@ -128,20 +128,20 @@ const fetchStatisticsMonth = async () => {
                 count: monthData.users.count,
                 growthRate: monthData.users.growthRate,
             },
-            products: {
-                title: monthData.products.title,
-                count: monthData.products.count,
-                growthRate: monthData.products.growthRate,
+            posts: {
+                title: monthData.posts.title,
+                count: monthData.posts.count,
+                growthRate: monthData.posts.growthRate,
             },
-            orders: {
-                title: monthData.orders.title,
-                count: monthData.orders.count,
-                growthRate: monthData.orders.growthRate,
+            comments: {
+                title: monthData.comments.title,
+                count: monthData.comments.count,
+                growthRate: monthData.comments.growthRate,
             },
-            publishers: {
-                title: monthData.publishers.title,
-                count: monthData.publishers.count,
-                growthRate: monthData.publishers.growthRate,
+            conversations: {
+                title: monthData.conversations.title,
+                count: monthData.conversations.count,
+                growthRate: monthData.conversations.growthRate,
             },
         }));
     } catch (error) {
@@ -170,15 +170,15 @@ const fetchStatisticsYear = async () => {
         }
         statistics.value.currentYear = {
             users: data.users,
-            products: data.products,
-            orders: data.orders,
-            publishers: data.publishers,
+            posts: data.posts,
+            comments: data.comments,
+            conversations: data.conversations,
         };
         statistics.value.growthRatesYear = {
             users: data.users.growthRate,
-            products: data.products.growthRate,
-            orders: data.orders.growthRate,
-            publishers: data.publishers.growthRate,
+            posts: data.posts.growthRate,
+            comments: data.comments.growthRate,
+            conversations: data.conversations.growthRate,
         };
     } catch (error) {
         console.error('Failed to fetch statistics:', error);

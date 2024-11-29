@@ -87,10 +87,11 @@ const toggleSidebar = () => {
                     >
                         <transition name="fade">
                             <h2 v-show="store.sidebarExpanded" class="text-2xl font-semibold flex items-center">
-                                <span class="text-foreground"
+                                <!-- <span class="text-foreground"
                                     ><span class="mr-2 flex items-center"><Icon name="Boxes" /></span
-                                ></span>
-                                TamLibrary
+                                ></span> -->
+                                <!-- TamLibrary -->
+                                Threadsnet
                             </h2>
                         </transition>
                         <Button

@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue';
 import { BarChart } from '@/components/ui/chart-bar';
 import { useToast } from 'vue-toastification';
 type Data = { month: string; total: number };
-const dataOrders = ref<Data[]>([]);
+const dataPosts = ref<Data[]>([]);
 
 const fetchData = async () => {
     try {
@@ -37,21 +37,11 @@ const fetchData = async () => {
                 const monthIndex = date.getMonth();
 
                 if (monthIndex >= 0 && monthIndex < 12) {
-                    monthlyData[monthIndex].total = monthData.orders.count;
+                    monthlyData[monthIndex].total = monthData.posts.count;
                 }
             });
         }
-        // const monthlyData: Data[] = [];
-        // if (Array.isArray(data.statisticsMonth)) {
-        //     data.statisticsMonth.forEach((monthData) => {
-        //         // Thêm dữ liệu vào monthlyData từ backend
-        //         monthlyData.push({
-        //             month: monthData.week,
-        //             total: monthData.orders.count,
-        //         });
-        //     });
-        // }
-        dataOrders.value = monthlyData;
+        dataPosts.value = monthlyData;
     } catch (error) {
         console.error('Error fetching data:', error.message);
     }
@@ -63,5 +53,5 @@ onMounted(() => {
 </script>
 
 <template>
-    <BarChart :data="dataOrders" :categories="['total']" :index="'month'" :rounded-corners="0" />
+    <BarChart :data="dataPosts" :categories="['total']" :index="'month'" :rounded-corners="0" />
 </template>

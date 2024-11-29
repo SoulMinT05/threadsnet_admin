@@ -6,16 +6,16 @@ import { useToast } from 'vue-toastification';
 const statistics = ref({
     currentMonth: {
         users: 0,
-        products: 0,
-        orders: 0,
-        publishers: 0,
-        populateOrders: [], // Thêm trường này để lưu đơn hàng
+        posts: 0,
+        comments: 0,
+        conversations: 0,
+        populateComments: [], // Thêm trường này để lưu đơn hàng
     },
     growthRates: {
         users: 0,
-        products: 0,
-        orders: 0,
-        publishers: 0,
+        posts: 0,
+        comments: 0,
+        conversations: 0,
     },
 });
 
@@ -46,16 +46,16 @@ const fetchData = async () => {
         statistics.value = {
             currentMonth: {
                 users: firstMonthData.users.count,
-                products: firstMonthData.products.count,
-                orders: firstMonthData.orders.count,
-                publishers: firstMonthData.publishers.count,
-                populateOrders: firstMonthData.orders.populateOrders || [], // Giả định rằng `populateOrders` nằm trong `orders`
+                posts: firstMonthData.posts.count,
+                comments: firstMonthData.comments.count,
+                conversations: firstMonthData.conversations.count,
+                populateComments: firstMonthData.comments.populateComments || [], // Giả định rằng `populateComments` nằm trong `comments`
             },
             growthRates: {
                 users: firstMonthData.users.growthRate,
-                products: firstMonthData.products.growthRate,
-                orders: firstMonthData.orders.growthRate,
-                publishers: firstMonthData.publishers.growthRate,
+                posts: firstMonthData.posts.growthRate,
+                comments: firstMonthData.comments.growthRate,
+                conversations: firstMonthData.conversations.growthRate,
             },
         };
     } catch (error) {
@@ -83,37 +83,31 @@ onMounted(() => {
 
 <template>
     <div class="space-y-8">
-        <div v-if="statistics.currentMonth.populateOrders.length === 0" class="text-center text-gray-500">
+        <div v-if="statistics.currentMonth.populateComments.length === 0" class="text-center text-gray-500">
             Chưa có đơn hàng
         </div>
         <div v-else>
             <div
-                v-for="(order, index) in statistics.currentMonth.populateOrders"
+                v-for="(comment, index) in statistics.currentMonth.populateComments"
                 :key="index"
                 class="flex items-center mt-4"
             >
                 <Avatar class="h-9 w-9">
-                    <AvatarImage :src="order.orderBy.avatarUrl || '/avatars/default.png'" alt="Avatar" />
+                    <AvatarImage :src="comment?.userId.avatar || '/avatars/default.png'" alt="Avatar" />
                     <AvatarFallback>
-                        {{ order.orderBy.firstName.charAt(0) || '' }}{{ order.orderBy.lastName.charAt(0) || '' }}
+                        {{ comment?.userId.username || '' }}
                     </AvatarFallback>
                 </Avatar>
                 <div class="ml-4 space-y-1">
                     <p class="text-sm font-medium leading-none">
-                        {{ order.orderBy.firstName || '' }} {{ order.orderBy.lastName || '' }}
+                        {{ comment.userId.name || '' }}
                     </p>
-                    <p class="text-sm text-muted-foreground">{{ order.orderBy.email || '' }}</p>
+                    <p class="text-sm text-muted-foreground">{{ comment.userId.email || '' }}</p>
                 </div>
                 <div class="ml-auto">
-                    <span
-                        :class="{
-                            'bg-blue-500 text-white': order.status === 'pending',
-                            'bg-green-500 text-white': order.status === 'accepted',
-                            'bg-red-500 text-white': order.status === 'rejected',
-                        }"
-                        class="px-3 py-1 rounded-full text-sm font-medium"
-                    >
-                        {{ getStatusMessage(order.status) || '' }}
+                    <span class="px-3 py-1 rounded-full text-sm font-medium">
+                        <!-- {{ getStatusMessage(order.status) || '' }} -->
+                        {{ comment.textComment }}
                     </span>
                 </div>
             </div>
