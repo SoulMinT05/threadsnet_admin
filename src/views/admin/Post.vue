@@ -370,13 +370,13 @@
                     <p>
                         <strong>Chế độ:</strong>
                         <span
-                            v-if="selectedPost.status === true"
+                            v-if="selectedPost.status === false"
                             class="bg-green-200 text-green-600 py-1 px-3 rounded-full text-xs"
                         >
                             Tích cực
                         </span>
                         <span
-                            v-else-if="selectedPost.status === false"
+                            v-else-if="selectedPost.status === true"
                             class="bg-red-200 text-red-600 py-1 px-3 rounded-full text-xs"
                         >
                             Nhạy cảm

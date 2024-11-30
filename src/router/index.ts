@@ -95,6 +95,13 @@ const router = createRouter({
                     } as RouteMeta & IRouteMeta,
                 },
                 {
+                    path: 'comment',
+                    component: () => import('@/views/admin/Comment.vue'),
+                    meta: {
+                        title: 'Comment',
+                    } as RouteMeta & IRouteMeta,
+                },
+                {
                     path: 'settings',
                     component: () => import('@/views/admin/Settings.vue'),
                     meta: {
